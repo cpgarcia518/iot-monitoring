@@ -1,0 +1,32 @@
+services:
+  influxdb3-core:
+    container_name: influxdb3-core
+    # image: quay.io/influxdb/influxdb3-core:latest
+    image: influxdb:3-core
+    ports:
+      - 8181:8181
+    env_file:
+      - .env
+    restart: unless-stopped
+    command:
+      # - influxdb3
+      - serve
+      # - --node-id=${INFLUXDB_NODE_ID}
+      # - --object-store=s3
+      # - --bucket=${S3_BUCKET}
+      # - --aws-access-key-id=${S3_ACCESS_KEY}
+      # - --aws-secret-access-key=${S3_SECRET_KEY}
+      # - --aws-endpoint=${S3_ENDPOINT}
+      # - --aws-allow-http
+      - --node-id=node0
+      - --object-store=file
+      - --data-dir=/var/lib/influxdb3
+#     volumes:
+#       - influxdb3-data:/var/lib/influxdb3
+
+# volumes:
+#   influxdb3-data:
+
+networks:
+  net_interface:
+    external: true
