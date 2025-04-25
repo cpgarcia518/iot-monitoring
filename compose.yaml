@@ -71,6 +71,8 @@ services:
       - HOBO_TOKEN=${HOBO_API_KEY}
       - HOBO_API_URL=${HOBO_API_URL}
       - HOBO_API_VERSION=${HOBO_API_VERSION}
+      # - START_DATE_TIME=${START_DATE_TIME}       # Optional
+      # - END_DATE_TIME=${END_DATE_TIME}           # Optional
     restart: unless-stopped
 
 volumes:
