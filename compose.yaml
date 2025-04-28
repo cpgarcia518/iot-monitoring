@@ -2,27 +2,6 @@
 # Author: Carlos A. Perez Garcia (cpgarcia518@gmail.com)
 
 services:
-  # influxdb2:
-  #   image: influxdb:2
-  #   ports:
-  #     - ${INFLUXDB_HTTP_PORT}:8086
-  #   environment:
-  #     - DOCKER_INFLUXDB_INIT_MODE=setup
-  #     - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_ADMIN_USER}
-  #     - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_ADMIN_PASSWORD}
-  #     - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
-  #     - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
-  #     - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
-  #   volumes:
-  #     - ./services/influxdb/data:/var/lib/influxdb2
-  #     - ./services/influxdb/config:/etc/influxdb2
-  #   healthcheck:
-  #     test: [ "CMD", "curl", "-f", "http://localhost:8086/health" ]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 3
-  #   restart: unless-stopped
-
   influxdb2:
     image: influxdb:2
     container_name: influxdb2
@@ -63,21 +42,21 @@ services:
         condition: service_healthy
     environment:
       - INFLUXDB_HOST=${INFLUXDB_HOST}
-    #   - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
-    #   - INFLUXDB_ORG=${INFLUXDB_ORG}
-    #   - INFLUXDB_BUCKET=${INFLUXDB_BUCKET}
+      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
+      - INFLUXDB_ORG=${INFLUXDB_ORG}
+      - INFLUXDB_BUCKET=${INFLUXDB_BUCKET_2}
       - TELEGRAF_COLLECTION_INTERVAL=${TELEGRAF_COLLECTION_INTERVAL}
       - HOSTNAME=telegraf
-      - HOBO_TOKEN=${HOBO_API_KEY}
+      - HOBO_API_TOKEN=${HOBO_API_TOKEN}
       - HOBO_API_URL=${HOBO_API_URL}
       - HOBO_API_VERSION=${HOBO_API_VERSION}
       # - START_DATE_TIME=${START_DATE_TIME}       # Optional
       # - END_DATE_TIME=${END_DATE_TIME}           # Optional
     restart: unless-stopped
 
-volumes:
-  influxdb2-data:
-  influxdb2-config:
+# volumes:
+#   influxdb2-data:
+#   influxdb2-config:
 
 networks:
   net_interface:
