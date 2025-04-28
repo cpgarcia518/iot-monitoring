@@ -26,10 +26,6 @@ services:
     restart: unless-stopped
     networks:
       - net_interface
-    # secrets:
-    #   - influxdb2-admin-username
-    #   - influxdb2-admin-password
-    #   - influxdb2-admin-token
 
 
   telegraf:
@@ -42,6 +38,7 @@ services:
         condition: service_healthy
     environment:
       - INFLUXDB_HOST=${INFLUXDB_HOST}
+      - INFLUXDB_PORT=${INFLUXDB_HTTP_PORT}
       - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
       - INFLUXDB_ORG=${INFLUXDB_ORG}
       - INFLUXDB_BUCKET=${INFLUXDB_BUCKET_2}
@@ -53,10 +50,9 @@ services:
       # - START_DATE_TIME=${START_DATE_TIME}       # Optional
       # - END_DATE_TIME=${END_DATE_TIME}           # Optional
     restart: unless-stopped
+    networks:
+      - net_interface
 
-# volumes:
-#   influxdb2-data:
-#   influxdb2-config:
 
 networks:
   net_interface:
