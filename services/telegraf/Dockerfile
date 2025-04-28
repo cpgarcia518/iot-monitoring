@@ -3,11 +3,16 @@
 
 FROM telegraf:latest
 
-RUN apt-get update && apt-get install -y --no-install-recommends mtr-tiny && \
-	rm -rf /var/lib/apt/lists/*
-
+# Install required packages
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    jq \
+    mtr-tiny && \
+    rm -rf /var/lib/apt/lists/*
+	
+# Copy configuration and scripts
 COPY telegraf.conf /etc/telegraf/telegraf.conf
+COPY scripts/ /opt/telegraf/scripts/
 
-# Copy the custom script
-COPY scripts/hobolink_telegraf_fetcher.sh /opt/telegraf/scripts/hobolink_telegraf_fetcher.sh
-RUN chmod +x /opt/telegraf/scripts/hobolink_telegraf_fetcher.sh
+# Ensure scripts are executable
+RUN chmod +x /opt/telegraf/scripts/*.sh
