@@ -14,9 +14,7 @@ if [ $# -lt 1 ]; then
 fi
 
 # Calculate time ranges
-# end_date=$(date -u +"%Y-%m-%d %H:%M:%S")
 end_date=${3:-$(date -u +"%Y-%m-%d %H:%M:%S")}
-# start_date=$(date -u -d "15 minutes ago" +"%Y-%m-%d %H:%M:%S")
 start_date=${2:-$(date -u -d "15 minutes ago" +"%Y-%m-%d %H:%M:%S")}
 # Uncomment the following lines to set a custom time range
 start_date="${START_DATE_TIME:-$start_date}"
