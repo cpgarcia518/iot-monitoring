@@ -1,4 +1,4 @@
-# 🌐 Distal IoT Monitoring Platform
+# 🌐 IoT Monitoring Platform
 
 **A modular, Docker-based environmental monitoring system for IoT devices**  
 *Start small with InfluxDB, scale up with Grafana, ChirpStack, and more!*
