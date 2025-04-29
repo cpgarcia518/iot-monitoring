@@ -18,7 +18,7 @@
 ## 📂 Repository Structure
 
 ```text
-distal-iot-monitoring/
+iot-monitoring/
 ├── .github/
 │   └── workflows/           # GitHub Actions for CI/CD
 │       ├── docker-build.yml  # Automated Docker image builds
