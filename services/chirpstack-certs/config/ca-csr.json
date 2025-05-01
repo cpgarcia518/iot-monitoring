@@ -1,0 +1,19 @@
+{
+    "CN": "ChirpStack CA",
+    "key": {
+      "algo": "rsa",
+      "size": 4096
+    },
+    "names": [
+      {
+        "C": "IT",
+        "ST": "Emilia-Romagna",
+        "L": "Bologna",
+        "O": "iot_org",
+        "OU": "IoT Security"
+      }
+    ],
+    "ca": {
+      "expiry": "175200h"
+    }
+  }

@@ -53,6 +53,19 @@ services:
     networks:
       - net_interface
 
+  node-red:
+    image: nodered/node-red:latest
+    container_name: node-red
+    environment:
+      - TZ=Europe/Rome
+      - NODE_RED_CREDENTIAL_SECRET=admin
+    ports:
+      - "1880:1880"
+    networks:
+      - net_interface
+    volumes:
+      - /mnt/data/node_red/data:/data
+      # - ./services/node_red/settings_node-red.js:/data/settings.js
 
 networks:
   net_interface:

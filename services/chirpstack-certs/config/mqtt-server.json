@@ -1,0 +1,23 @@
+{
+    "CN": "mqtt.iot_org.local",
+    "hosts": [
+      "mqtt",
+      "mqtt.iot_org.local",
+      "localhost",
+      "137.204.81.160",
+      "10.8.1.115"
+    ],
+    "key": {
+      "algo": "rsa",
+      "size": 4096
+    },
+    "names": [
+      {
+        "C": "IT",
+        "ST": "Emilia-Romagna",
+        "L": "Bologna",
+        "O": "iot_org",
+        "OU": "MQTT Server"
+      }
+    ]
+  }
