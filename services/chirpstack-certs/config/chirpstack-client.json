@@ -1,12 +1,5 @@
 {
-    "CN": "mqtt.iot_org.local",
-    "hosts": [
-      "mqtt",
-      "mqtt.iot_org.local",
-      "localhost",
-      "137.204.81.160",
-      "10.8.1.61"
-    ],
+    "CN": "localhost",
     "key": {
       "algo": "rsa",
       "size": 4096
@@ -17,7 +10,7 @@
         "ST": "Emilia-Romagna",
         "L": "Bologna",
         "O": "iot_org",
-        "OU": "MQTT Server"
+        "OU": "ChirpStack Server"
       }
     ]
   }

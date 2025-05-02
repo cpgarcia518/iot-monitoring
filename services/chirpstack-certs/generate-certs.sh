@@ -1,64 +1,91 @@
 #!/bin/bash
 # ---------------------------------------------------------------
-# ChirpStack SSL Certificate Generator
+# ChirpStack Certificate Generator (No Host Validation)
 # Author: Carlos Alejandro Perez Garcia <cpgarcia518@gmail.com>
 # Organization: iot_org
 # Location: Bologna, Italy
 # Version: 1.0
 # ---------------------------------------------------------------
+# Usage: ./generate-certs.sh [GATEWAY_ID]
+# Example: ./generate-certs.sh 08
+# ---------------------------------------------------------------
 
-set -e  # Exit on error
+set -euo pipefail
 
-# ==================== Configuration ====================
+# ==================== CONFIGURATION ====================
 CERT_DIR="./config"
 OUTPUT_DIR="./certs"
 CA_PREFIX="ca"
 SERVER_PREFIX="mqtt-server"
+GATEWAY_ID="${1:-}"
 
-# ==================== Initialize ====================
-echo "🔐 ChirpStack Certificate Generation Script"
-echo "📅 $(date)"
-echo "------------------------------------------------"
+[ -z "$GATEWAY_ID" ] && echo "❌ Error: Missing gateway ID" && exit 1
 
-# Create output directory
+# ==================== CERTIFICATE TEMPLATES ====================
+generate_gateway_config() {
+  local gw_id=$1
+  cat > "$CERT_DIR/$gw_id.json" <<EOF
+{
+  "CN": "$gw_id.iot_org.local",
+  "key": { 
+    "algo": "rsa",
+    "size": 4096 
+  },
+  "names": [{
+    "C": "IT",
+    "ST": "Emilia-Romagna",
+    "L": "Bologna",
+    "O": "iot_org",
+    "OU": "LoRaWAN Gateway"
+  }]
+}
+EOF
+}
+
+# ==================== GENERATION FUNCTIONS ====================
+generate_ca() {
+  [ -f "$OUTPUT_DIR/$CA_PREFIX.pem" ] || {
+    cfssl gencert -initca "$CERT_DIR/ca-csr.json" | cfssljson -bare "$OUTPUT_DIR/$CA_PREFIX"
+    echo "✅ Root CA Generated"
+  }
+}
+
+generate_server_cert() {
+  [ -f "$OUTPUT_DIR/$SERVER_PREFIX.pem" ] || {
+    cfssl gencert \
+      -ca "$OUTPUT_DIR/$CA_PREFIX.pem" \
+      -ca-key "$OUTPUT_DIR/$CA_PREFIX-key.pem" \
+      -config "$CERT_DIR/ca-config.json" \
+      -profile server \
+      "$CERT_DIR/mqtt-server.json" | cfssljson -bare "$OUTPUT_DIR/$SERVER_PREFIX"
+    echo "✅ MQTT Server Certificate Generated"
+  }
+}
+
+generate_gateway_cert() {
+  local gw_id="gateway$1"
+  generate_gateway_config "$gw_id"
+  
+  cfssl gencert \
+    -ca "$OUTPUT_DIR/$CA_PREFIX.pem" \
+    -ca-key "$OUTPUT_DIR/$CA_PREFIX-key.pem" \
+    -config "$CERT_DIR/ca-config.json" \
+    -profile client \
+    "$CERT_DIR/$gw_id.json" | cfssljson -bare "$OUTPUT_DIR/$gw_id"
+  
+  rm "$CERT_DIR/$gw_id.json"
+  echo "✅ Gateway Certificate for $gw_id Generated"
+}
+
+# ==================== MAIN EXECUTION ====================
 mkdir -p "$OUTPUT_DIR"
+generate_ca
+generate_server_cert
+generate_gateway_cert "$GATEWAY_ID"
 
-# ==================== CA Generation ====================
-echo "🛠️  Generating Root CA Certificate..."
-cfssl gencert -initca "$CERT_DIR/ca-csr.json" | cfssljson -bare "$OUTPUT_DIR/$CA_PREFIX"
+# Set secure permissions
+chmod 600 "$OUTPUT_DIR"/*-key.pem
+chmod 644 "$OUTPUT_DIR"/*.pem
 
-# Verify CA
-echo "🔍 CA Certificate Details:"
-openssl x509 -in "$OUTPUT_DIR/$CA_PREFIX.pem" -text -noout | grep -E "Issuer:|Subject:|Not Before|Not After"
-
-# ==================== Server Certificate ====================
-echo "🖥️  Generating MQTT Server Certificate..."
-cfssl gencert \
-  -ca "$OUTPUT_DIR/$CA_PREFIX.pem" \
-  -ca-key "$OUTPUT_DIR/$CA_PREFIX-key.pem" \
-  -config "$CERT_DIR/ca-config.json" \
-  -profile server \
-  "$CERT_DIR/mqtt-server.json" | cfssljson -bare "$OUTPUT_DIR/$SERVER_PREFIX"
-
-# Verify Server Cert
-echo "🔍 Server Certificate Details:"
-openssl x509 -in "$OUTPUT_DIR/$SERVER_PREFIX.pem" -text -noout | grep -E "Issuer:|Subject:|DNS:|IP Address:|Not Before|Not After"
-
-# ==================== Set Permissions ====================
-echo "🔒 Setting Secure File Permissions..."
-chmod 600 "$OUTPUT_DIR"/*-key.pem  # Private keys: RW only by owner
-chmod 644 "$OUTPUT_DIR"/*.pem      # Certificates: Readable by all
-chmod 644 "$OUTPUT_DIR"/*.csr      # CSR files
-
-# ==================== Final Output ====================
-echo "✅ Certificate Generation Complete!"
-echo "📁 Output Directory: $OUTPUT_DIR"
-ls -lh "$OUTPUT_DIR" | grep -E "\.pem|\.csr"
-
-echo "------------------------------------------------"
-echo "💡 Next Steps:"
-echo "1. Deploy ca.pem to all clients for trust"
-echo "2. Use mqtt-server.pem and mqtt-server-key.pem on your MQTT server"
-echo "3. Set TLS config in ChirpStack:"
-echo "   - tls_cert = \"$OUTPUT_DIR/$SERVER_PREFIX.pem\""
-echo "   - tls_key = \"$OUTPUT_DIR/$SERVER_PREFIX-key.pem\""
+echo "🔐 Certificates ready in $OUTPUT_DIR:"
+ls -l "$OUTPUT_DIR"/{ca.pem,mqtt-server.pem,"gateway$GATEWAY_ID".pem}
