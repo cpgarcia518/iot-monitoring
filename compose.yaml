@@ -47,6 +47,8 @@ services:
       - HOBO_API_TOKEN=${HOBO_API_TOKEN}
       - HOBO_API_URL=${HOBO_API_URL}
       - HOBO_API_VERSION=${HOBO_API_VERSION}
+      - MQTT_HOST=${MQTT_HOST}
+      - MQTT_PORT=${MQTT_PORT}
       # - START_DATE_TIME=${START_DATE_TIME}       # Optional
       # - END_DATE_TIME=${END_DATE_TIME}           # Optional
     restart: unless-stopped
@@ -65,7 +67,6 @@ services:
       - net_interface
     volumes:
       - /mnt/data/node_red/data:/data
-      # - ./services/node_red/settings_node-red.js:/data/settings.js
 
 networks:
   net_interface:

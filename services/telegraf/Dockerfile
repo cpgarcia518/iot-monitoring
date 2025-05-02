@@ -2,6 +2,7 @@
 # Author: Carlos Alejandro Perez Garcia (cpgarcia518@gmail.com)
 
 FROM telegraf:latest
+LABEL maintainer="Carlos Alejandro Perez Garcia <cpgarcia518@gail.com>"
 
 # Install required packages
 RUN apt-get update && \
