@@ -1,0 +1,17 @@
+{
+    "CN": "mqtt-gateway",
+    "hosts": [
+        "mqtt-gateway"
+      ],
+    "key": { 
+      "algo": "rsa",
+      "size": 4096 
+    },
+    "names": [{
+      "C": "IT",
+      "ST": "Emilia-Romagna",
+      "L": "Bologna",
+      "O": "iot_org",
+      "OU": "LoRaWAN Gateway"
+    }]
+  }

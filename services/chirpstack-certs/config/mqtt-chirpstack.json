@@ -1,5 +1,9 @@
 {
-    "CN": "localhost",
+    "CN": "chirpstack",
+    "hosts": [
+      "mosquitto",
+      "localhost"
+    ],
     "key": {
       "algo": "rsa",
       "size": 4096

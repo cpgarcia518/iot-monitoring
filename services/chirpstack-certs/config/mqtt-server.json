@@ -1,11 +1,13 @@
 {
-    "CN": "mqtt.iot_org.local",
+    "CN": "mosquitto",
     "hosts": [
-      "mqtt",
-      "mqtt.iot_org.local",
+      "mosquitto",
       "localhost",
+      "mqtt-gateway",
       "137.204.81.160",
-      "10.8.1.61"
+      "10.8.1.61",
+      "distal.iotbo.it",
+      "137.204.81.187"
     ],
     "key": {
       "algo": "rsa",

@@ -6,8 +6,8 @@
 # Location: Bologna, Italy
 # Version: 1.0
 # ---------------------------------------------------------------
-# Usage: ./generate-certs.sh [GATEWAY_ID]
-# Example: ./generate-certs.sh 08
+# Usage: ./generate-certs.sh [PROFILE]
+# Example: ./generate-certs.sh server
 # ---------------------------------------------------------------
 
 set -euo pipefail
@@ -16,31 +16,11 @@ set -euo pipefail
 CERT_DIR="./config"
 OUTPUT_DIR="./certs"
 CA_PREFIX="ca"
-SERVER_PREFIX="mqtt-server"
-GATEWAY_ID="${1:-}"
+PROFILE="${1:-}"
+CERT_PREFIX="mqtt-${1:-}"
 
-[ -z "$GATEWAY_ID" ] && echo "❌ Error: Missing gateway ID" && exit 1
 
-# ==================== CERTIFICATE TEMPLATES ====================
-generate_gateway_config() {
-  local gw_id=$1
-  cat > "$CERT_DIR/$gw_id.json" <<EOF
-{
-  "CN": "$gw_id.iot_org.local",
-  "key": { 
-    "algo": "rsa",
-    "size": 4096 
-  },
-  "names": [{
-    "C": "IT",
-    "ST": "Emilia-Romagna",
-    "L": "Bologna",
-    "O": "iot_org",
-    "OU": "LoRaWAN Gateway"
-  }]
-}
-EOF
-}
+[ -z "$PROFILE" ] && echo "❌ Error: Missing profile" && exit 1
 
 # ==================== GENERATION FUNCTIONS ====================
 generate_ca() {
@@ -50,42 +30,27 @@ generate_ca() {
   }
 }
 
-generate_server_cert() {
-  [ -f "$OUTPUT_DIR/$SERVER_PREFIX.pem" ] || {
+generate_cert() {
+  [ -f "$OUTPUT_DIR/$CERT_PREFIX.pem" ] || {
     cfssl gencert \
       -ca "$OUTPUT_DIR/$CA_PREFIX.pem" \
       -ca-key "$OUTPUT_DIR/$CA_PREFIX-key.pem" \
       -config "$CERT_DIR/ca-config.json" \
-      -profile server \
-      "$CERT_DIR/mqtt-server.json" | cfssljson -bare "$OUTPUT_DIR/$SERVER_PREFIX"
-    echo "✅ MQTT Server Certificate Generated"
+      -profile "$PROFILE" \
+      "$CERT_DIR/$CERT_PREFIX.json" | cfssljson -bare "$OUTPUT_DIR/$CERT_PREFIX"
+    echo "✅ MQTT Certificate Generated"
   }
-}
-
-generate_gateway_cert() {
-  local gw_id="gateway$1"
-  generate_gateway_config "$gw_id"
-  
-  cfssl gencert \
-    -ca "$OUTPUT_DIR/$CA_PREFIX.pem" \
-    -ca-key "$OUTPUT_DIR/$CA_PREFIX-key.pem" \
-    -config "$CERT_DIR/ca-config.json" \
-    -profile client \
-    "$CERT_DIR/$gw_id.json" | cfssljson -bare "$OUTPUT_DIR/$gw_id"
-  
-  rm "$CERT_DIR/$gw_id.json"
-  echo "✅ Gateway Certificate for $gw_id Generated"
 }
 
 # ==================== MAIN EXECUTION ====================
 mkdir -p "$OUTPUT_DIR"
 generate_ca
-generate_server_cert
-generate_gateway_cert "$GATEWAY_ID"
+generate_cert
 
 # Set secure permissions
 chmod 600 "$OUTPUT_DIR"/*-key.pem
 chmod 644 "$OUTPUT_DIR"/*.pem
 
 echo "🔐 Certificates ready in $OUTPUT_DIR:"
-ls -l "$OUTPUT_DIR"/{ca.pem,mqtt-server.pem,"gateway$GATEWAY_ID".pem}
+ls -l "$OUTPUT_DIR"/*.pem
+

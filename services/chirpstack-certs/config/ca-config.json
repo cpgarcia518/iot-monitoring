@@ -24,6 +24,14 @@
             "key encipherment",
             "client auth"
           ]
+        },
+        "chirpstack": {
+          "expiry": "87600h",
+          "usages": [
+            "signing",
+            "key encipherment",
+            "client auth"
+          ]
         }
       }
     }
