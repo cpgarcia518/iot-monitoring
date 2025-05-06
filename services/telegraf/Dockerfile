@@ -24,8 +24,8 @@ COPY scripts/ /opt/telegraf/scripts/
 RUN chmod +x /opt/telegraf/scripts/*.sh     
 
 # Health check (optional)
-HEALTHCHECK --interval=30s --timeout=3s \
-  CMD telegraf --config /etc/telegraf/telegraf.conf --test >/dev/null 2>&1 || exit 1
+# HEALTHCHECK --interval=30s --timeout=3s \
+#   CMD telegraf --config /etc/telegraf/telegraf.conf --test >/dev/null 2>&1 || exit 1
 
 
 # Run Telegraf with merged configurations

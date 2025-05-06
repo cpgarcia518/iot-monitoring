@@ -57,3 +57,13 @@ echo "$response" | jq -r '
     mktime | . * 1000000000
 )"
 '
+
+
+# echo "$response" | jq -r '
+# .data[] | 
+# "\(.sensor_measurement_type | gsub(" "; "_") | ascii_downcase),logger_sn=\(.logger_sn),sensor_sn=\(.sensor_sn),unit=\(.unit),data_type=\(.data_type) value=\(.value) \(
+#     (.timestamp | sub(" "; "T") | sub("\\..*Z"; "") | 
+#     strptime("%Y-%m-%dT%H:%M:%S")? // now | 
+#     mktime | . * 1000000000
+# )"
+# '
