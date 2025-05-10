@@ -71,6 +71,28 @@ services:
     volumes:
       - /mnt/data/node_red/data:/data
 
+  grafana:
+    image: grafana/grafana:12.0.0
+    container_name: grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+      - GF_LOG_LEVEL=debug
+      # - GF_PLUGINS_PREINSTALL=grafana-simple-json-datasource
+      # - GF_AWS_default_ACCESS_KEY_ID__FILE=/run/secrets/aws_access_key_id
+      - GF_FEATURE_TOGGLES_PROVISIONING=true
+      # - GF_FEATURE_TOGGLES_KUBERNETESCLIENTDASHBOARDSFOLDERS=true
+      # - GF_FEATURE_TOGGLES_KUBERNETESDASHBOARDS=k8s
+      # - GF_FEATURE_TOGGLES_GRAFANAAPISERVERENSUREKUBECTLACCESS=true   # If you want easy kubectl setup development mode
+    ports:
+      - ${GRAFANA_PORT}:3000
+    networks:
+      - net_interface
+    volumes:
+      - /mnt/data/grafana/storage:/var/lib/grafana
+      
+
 networks:
   net_interface:
     external: true
