@@ -54,6 +54,13 @@ services:
       - MQTT_PORT=${MQTT_PORT}
       # - START_DATE_TIME=${START_DATE_TIME}       # Optional
       # - END_DATE_TIME=${END_DATE_TIME}           # Optional
+      - OWM_API_KEY=${OWM_API_KEY}
+      - OWM_API_URL=${OWM_API_URL}
+      - OWM_API_VERSION=${OWM_API_VERSION}
+      - OWM_CITY_ID=${OWM_CITY_ID}
+      - OWM_UNITS=${OWM_UNITS}
+      - LATITUDE=${DICAM_LATITUDE}
+      - LONGITUDE=${DICAM_LONGITUDE}
     restart: unless-stopped
     networks:
       - net_interface
