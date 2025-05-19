@@ -87,3 +87,14 @@ Then you can query as in InfluxDB v1.x!
 - Don't modify system buckets (`_monitoring`, `_tasks`).
 - Document your mappings if managing many buckets.
 
+
+```bash
+influx v1 dbrp create \
+  --db openweather_raw \
+  --rp raw_data_rp \
+  --bucket-id 92a42a0e24022632
+
+influx v1 dbrp delete --id YOUR_DBRP_ID
+
+Token 5StoLkuBVZzW-UMAK5K2Kt_MvTS-7_Atus9MpnxgldAkwyiQV3_hlr8EmsFapRN56-3bsNSznXVblCUW_BeDyw==
+```
